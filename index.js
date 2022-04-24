@@ -1,12 +1,16 @@
 //imports
 const express = require("express");
+const cors = require("cors");
 const repoContext = require("./repository/repository-wrapper");
+const productValidate = require("./middleware/product-validation");
+const productLogger = require("./middleware/product-logger");
 // creating an app object of type express.
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 //Endpoint
 //http://localhost:5005(BASE URL)
@@ -33,7 +37,7 @@ app.get("/api/products/:id", (req, res) => {
 
 // POST new product
 //httip://localhost:5005/products
-app.post("/api/products", (req, res) => {
+app.post("/api/products", [productLogger, productValidate], (req, res) => {
   //  accesses the request made by the user.
   const newProduct = req.body;
   // adds the item to the repo.
